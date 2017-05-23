@@ -37,6 +37,29 @@ def download_gaincap(filename, path):
         file_csv = "USD_JPY_Week%d.csv" %(i+1)
         try:
             f = zipfile.ZipFile(hd_path).open(file_csv)
+            dfx = pd.read_csv(f, index_col=3, date_parser=__gaincap_datetime_parser)[['RateBid']]
+            f.close()
+            if tsdflg:
+                tsd = dfx.copy()
+                tsdflg = False
+            else:
+                tsd = tsd.append(dfx)
+        except Exception:
+            print("Error open zip file %s. The error is" %filename[i])
+    return tsd
+
+if __name__ == '__main__':
+    filename0 = ["USD_JPY_Week1.zip",
+                 "USD_JPY_Week2.zip",
+                 "USD_JPY_Week3.zip",
+                 "USD_JPY_Week4.zip",
+                 "USD_JPY_Week5.zip"]
+    path0 = "./data"
+    ts = download_gaincap(filename0, path0)
+
+    print("end--------------------------------------", len(ts))
+
+
 
 
 
